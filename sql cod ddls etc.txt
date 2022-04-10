@@ -1,0 +1,188 @@
+
+ SQL code===========================================================================================================================================
+
+
+Select DATEDIFF(table1.DueDate , table1.RentDate) AS DateDiff ,table2.AccountID  , (DATEDIFF(table1.DueDate,table1.RentDate) -4)*2 as DayLateFee, 
+table1.rentbuy,table2.AccountBalance
+
+
+From Transaction_Table as table1 
+Join user_account_table as table2
+ON table1.AccountID=table2.AccountID
+
+join fees as table3
+on table2.AccountID=table3.AccountID
+
+Where DATEDIFF(CAST(DueDate As date) , CAST(RentDate As date)) > 1 AND rentbuy!="buy" ;
+
+
+update user_account_table
+ 
+join fees on fees.AccountID=user_account_table.AccountID
+ 
+set AccountBalance=AccountBalance+DayLateFee
+ 
+Where DayLateFee>0;
+
+
+
+ SQL code===========================================================================================================================================
+
+
+ SQL tables ===========================================================================================================================================
+CREATE TABLE `author_table` (
+  
+`company` varchar(255) NOT NULL,
+  
+`firstName` char(255) NOT NULL,
+  
+`lastName` char(255) NOT NULL,
+  
+PRIMARY KEY (`firstName`,`lastName`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+
+
+
+CREATE TABLE `book_table` (
+  
+`ISBN` int NOT NULL,
+  
+`Title` text NOT NULL,
+  
+`Publisher` text NOT NULL,
+  
+`PublisherDate` text NOT NULL,
+  
+`FirstName` char(225) NOT NULL,
+  
+`Lastname` char(225) NOT NULL,
+  
+`Genre` varchar(255) NOT NULL,
+  
+`BuyQuantity` int DEFAULT NULL,
+  
+`RentQuantity` int DEFAULT NULL,
+  
+PRIMARY KEY (`ISBN`),
+  
+UNIQUE KEY `ISBN_UNIQUE` (`ISBN`),
+  
+KEY `LastName_FK_idx` (`Lastname`),
+  
+KEY `Name_FK_idx` (`FirstName`,`Lastname`),
+  
+KEY `Genre_FK_idx` (`Genre`),
+  
+CONSTRAINT `Genre_FK` FOREIGN KEY (`Genre`) REFERENCES `category_table` (`Genre`),
+  
+CONSTRAINT `Name_FK` FOREIGN KEY (`FirstName`, `Lastname`) REFERENCES `author_table` (`firstName`, `lastName`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+
+
+CREATE TABLE `category_table` (
+  
+`Genre` varchar(255) NOT NULL,
+  
+`Format` varchar(255) NOT NULL,
+  
+PRIMARY KEY (`Genre`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+
+CREATE TABLE `fees` (
+  
+`AccountID` int NOT NULL,
+  
+`DayLateFee` decimal(5,2) DEFAULT '0.00',
+  
+`TotalFee` decimal(5,2) DEFAULT '0.00',
+  
+PRIMARY KEY (`AccountID`),
+  
+CONSTRAINT `AccountID_FK` FOREIGN KEY (`AccountID`) REFERENCES `user_account_table` (`AccountID`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+
+
+
+CREATE TABLE `transaction_table` (
+  
+`orderNumber` int NOT NULL,
+  
+`PaymentAmt` int DEFAULT NULL,
+  
+`PaymentType` text,
+  
+`TransactionDate` text,
+  
+`Email` text,
+  
+`RentDate` date DEFAULT NULL,
+  
+`DueDate` date DEFAULT NULL,
+  
+`ISBN` int DEFAULT NULL,
+  
+`rentbuy` text,
+  
+`AccountID` int DEFAULT NULL,
+  
+PRIMARY KEY (`orderNumber`),
+  
+KEY `Account_FK_idx` (`AccountID`),
+  
+KEY `ISBN_FK_idx` (`ISBN`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+
+
+
+
+CREATE TABLE `user_account_table` (
+  
+`email` varchar(255) NOT NULL,
+  
+`AccountID` int NOT NULL,
+  
+`AccountBalance` double DEFAULT NULL,
+  
+`password` text,
+  
+`Creation_Date` text,
+  
+`LastName` text,
+  
+`FirstName` text,
+  
+`phone` text,
+  
+PRIMARY KEY (`AccountID`),
+  
+CONSTRAINT `fees` FOREIGN KEY (`AccountID`) REFERENCES `fees` (`AccountID`),
+  
+CONSTRAINT `Transaction` FOREIGN KEY (`AccountID`) REFERENCES `transaction_table` (`AccountID`)
+) 
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+ SQL code===========================================================================================================================================

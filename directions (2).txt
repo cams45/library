@@ -1,0 +1,16 @@
+directions: for intelij
+Step 1) upload jar to libraries
+	a. click file
+	b. go to project structure
+	c. go to libraries
+	d. click new the + sign
+	e. click java
+	f. upload jar
+
+step 2) upload program or exicute code in new window
+
+step3) log into the db with your mysql login information
+
+example
+n number
+password; Fall20204506
